@@ -1,9 +1,48 @@
-import React from "react";
-import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import React, { useContext, useEffect, useState } from "react";
+import { NavLink, Outlet, useNavigate, useLocation } from "react-router-dom";
 import { assets } from "../assets/assets";
+import { AppContext } from "../context/AppContext";
+import Loading from "../components/Loading";
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const [isLoading, setIsLoading] = useState(true);
+
+  const {companyData, setCompanyData, setCompanyToken, companyToken} = useContext(AppContext)
+
+  //function to logout company
+  const logout = () => {
+    setCompanyToken(null)
+    localStorage.removeItem('companyToken')
+    setCompanyData(null)
+    navigate('/')
+  }
+
+  useEffect(()=>{
+    // Check if user is authenticated
+    const storedToken = localStorage.getItem('companyToken')
+    if (!storedToken && !companyToken) {
+      navigate('/')
+      return
+    }
+
+    // If we have company data and we're on the main dashboard route, redirect to manage jobs
+    if (companyData && location.pathname === '/dashboard') {
+      navigate('/dashboard/manage-job')
+      setIsLoading(false)
+    } else if (companyToken) {
+      // If we have token but no company data, wait for it to load
+      setIsLoading(false)
+    } else {
+      setIsLoading(false)
+    }
+  },[companyData, companyToken, navigate, location.pathname])
+
+  if (isLoading) {
+    return <Loading />
+  }
+
   return (
     <div className="min-h-screen" >
 
@@ -11,17 +50,20 @@ const Dashboard = () => {
       <div className="shadow py-4">
         <div className="px-5 flex justify-between items-center">
           <img className="max-sm:w-32 cursor-pointer" onClick={() => navigate("/")} src={assets.logo} alt="" />
-          <div className="flex items-center gap-4">
-            <p className="max-sm:hidden"> Welcome, Job Portal  </p>
-            <div className="relative group">
-              <img className="w-8 border border-none rounded-full" src={assets.company_icon} alt="" />
-              <div className="absolute hidden group-hover:block top-0 right-0 z-10 text-black rounded pt-12">
-                <ul className="list-none m-0 p-2 bg-white rounded-md border text-sm">
-                  <li className="py-2 px-3 pr-10 cursor-pointer">Logout</li>
-                </ul>
-              </div>
-            </div>
-          </div>
+            {companyData && (
+              <div className="flex items-center gap-4">  
+                <p className="max-sm:hidden"> Welcome, {companyData.name}  </p>
+                <div className="relative group">
+                  <img className="w-8 border border-none rounded-full" src={companyData.image} alt="" />
+                  <div className="absolute hidden group-hover:block top-0 right-0 z-10 text-black rounded pt-12">
+                    <ul className="list-none m-0 p-2 bg-white rounded-md border text-sm">
+                      <li className="py-2 px-3 pr-10 cursor-pointer" onClick={logout}>Logout</li>
+                    </ul>
+                  </div>
+                </div>
+              </div> 
+            )
+          }
         </div>
       </div>
 
@@ -53,7 +95,7 @@ const Dashboard = () => {
         </ul>
        </div>
 
-        <div>
+        <div className="flex-1 h-full p-2 sm:p-5">
           <Outlet/>
         </div>
 

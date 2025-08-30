@@ -84,12 +84,12 @@ export const JobCategories = [
 
 export const JobLocations = [
     "Bangalore",
-    "Washington",
+    "kochi",
     "Hyderabad",
     "Mumbai",
-    "California",
+    "Delhi",
     "Chennai",
-    "New York"
+    "Kolkata"
 ]
 
 // Sample data for Manage Jobs Page

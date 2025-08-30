@@ -1,8 +1,13 @@
-import React, { use, useEffect, useRef, useState } from "react";
+import React, { use, useContext, useEffect, useRef, useState } from "react";
 //import ReactQuill from "react-quill";
 import 'quill/dist/quill.snow.css';
 import Quill from "quill";
 import { JobCategories,  JobLocations } from "../assets/assets";
+import { AppContext } from "../context/AppContext";
+import axios from "axios";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+
 
 const AddJob = () => {
 
@@ -15,22 +20,75 @@ const AddJob = () => {
 
   const editorRef = useRef(null);
   const quillRef = useRef(null);
+  const {backendUrl, companyToken} = useContext(AppContext)
+  const navigate = useNavigate()
 
-  useEffect(() => {
+  // Test authentication
+  const testAuth = async () => {
+    try {
+      const {data} = await axios.get(backendUrl + '/api/company/test-auth', {
+        headers: {token: companyToken}
+      })
+      console.log('Auth test response:', data)
+    } catch (error) {
+      console.error('Auth test error:', error)
+    }
+  }
+
+  const onSubmitHandler = async (e) => {
+    e.preventDefault()
+          try {
+                console.log('Submitting job with token:', companyToken)
+                console.log('Form data:', { title, location, category, level, salary })
+
+                const description = quillRef.current.root.innerHTML
+                console.log('Description:', description)
+
+                const  {data} = await axios.post(backendUrl + '/api/company/post-job', {
+                  title,
+                  location,
+                  category,
+                  level,
+                  salary,
+                  description
+                }, {headers: {token: companyToken}}
+              )
+
+              console.log('Response:', data)
+
+              if (data.success) {
+                toast.success(data.message)
+                setTitle('')
+                setSalary(0)
+                quillRef.current.root.innerHTML = ""
+                navigate('/dashboard/manage-job')
+              } else{
+                toast.error(data.message)
+              }
+
+          } catch (error) {
+                console.error('Error submitting job:', error)
+                toast.error(error.response?.data?.message || error.message)
+          }
+   }
+
+  useEffect(() => { 
     // initialize quill only once 
     if (!quillRef.current && editorRef.current) {
       quillRef.current = new Quill(editorRef.current, {
         theme: 'snow',
       });
     }
-
-
-
-  },[])
+    
+    // Test authentication on component mount
+    if (companyToken) {
+      testAuth()
+    }
+  },[companyToken])
 
   return (
 
-    <form className="container p-4 flex flex-col gap-4 w-full items-start ">
+    <form onSubmit={onSubmitHandler} className="container p-4 flex flex-col gap-4 w-full items-start ">
            <div className="w-full">
               <p className="mb-2">Job Title</p>
               <input type="text" placeholder="Enter Job Title" 
@@ -86,7 +144,7 @@ const AddJob = () => {
                   className="w-full px-3 py-2 border-2 border-gray-300 rounded sm:w-[120px]"/>
            </div>
 
-         <button className="w-28 py-3 mt-4 bg-blue-500 text-white rounded" type="submit">Add Job</button>
+         <button className="w-28 py-3 mt-4 bg-blue-500 text-white rounded cursor-pointer" type="submit">Add Job</button>
     </form>
  
   );

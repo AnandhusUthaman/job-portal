@@ -4,8 +4,8 @@ const userSchema = new mongoose.Schema({
     _id: {type:String, required: true},
     name: {type:String, required:true},
     email: {type:String, required: true, unique: true},
-    resume: {type:String},
-    Image: {type:String, required: true}
+    resume: {type:String, default: ''},
+    image: {type:String, default: ''}
 })
 
 const User = mongoose.model('User' , userSchema)
