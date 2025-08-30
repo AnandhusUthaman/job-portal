@@ -7,8 +7,6 @@ JOB-PORTAL🎯
 Anandhu S Uthaman
 
 
-
-
 ### Project Description
 Job Portal Website
 Built a modern, scalable MERN stack job portal based on a tutorial from the GreatStack YouTube channel, enabling seamless job listings, applications, and comprehensive administrative management.
@@ -64,19 +62,21 @@ npm run dev
 
 
 # Screenshots (Add at least 3)
-![alt text](image-1.png)
+<img width="1919" height="907" alt="image" src="https://github.com/user-attachments/assets/a377382d-ded0-43a8-acee-c2f2a1723eac" />
 home page 
 
-![alt text](image-2.png)
+<img width="1919" height="914" alt="image" src="https://github.com/user-attachments/assets/d0ae7b15-ee26-4ee5-9ab3-da8da40ac15f" />
 job list 
 
-![alt text](image-3.png)
+<img width="1919" height="903" alt="image" src="https://github.com/user-attachments/assets/d186b89e-e6b0-4daf-a7ad-ae3ed2118c7f" />
 dashboard
 
 
 References
 •	GitHub: https://github.com/AnandhusUthaman
+
 •	Portfolio: https://anandhusuthaman.vercel.app
+
 •	LinkedIn: https://www.linkedin.com/in/anandhu-s-uthaman-a44bb3309/
 
 
